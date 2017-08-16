@@ -49,18 +49,32 @@ GLuint Mesh::getElementBuffer()
 	return elementbuffer;
 }
 
-Mesh::Mesh(std::string path)
+GLuint Mesh::getTexture()
 {
-	loadMesh(path);
+	return this->Texture;
 }
+
+Mesh::Mesh(std::string obj)
+{
+	std::string obj_path = "mesh/" + obj + ".obj";
+	loadMesh(obj_path);
+
+	std::string tex_path = "mesh/" + obj + ".DDS";
+	Texture = loadDDS(tex_path.c_str());
+	
+	if (Texture == 0)
+		Texture = loadDDS("mesh/uvmap.DDS");
+} 
 
 void Mesh::loadMesh(std::string path)
 {
 	bool res = loadOBJ(path.c_str(), vertices, uvs, normals);
 	if (res)
 		std::cout << path << "obj loaded." << std::endl;
-	else
-		exit(100);
+	else {
+		std::cout << "obj load fail! file: " << path << std::endl;
+		exit(55);
+	}
 
 	indexVBO(vertices, uvs, normals, indices, indexed_vertices, indexed_uvs, indexed_normals);
 }
@@ -93,4 +107,6 @@ void Mesh::deleteBuffers()
 	glDeleteBuffers(1, &uvbuffer);
 	glDeleteBuffers(1, &normalbuffer);
 	glDeleteBuffers(1, &elementbuffer);
+	glDeleteTextures(1, &Texture);
+
 }

@@ -1,4 +1,4 @@
-#include <../build/Camera.h>
+#include <../Camera.h>
 
 using namespace glm;
 
@@ -8,6 +8,11 @@ Camera::Camera(GLFWwindow* window, glm::vec3 position) {
 
 	horizontalAngle = 3.14f;
 	verticalAngle = 0.0f;
+	FoV = 90.0f;
+	zNear = 0.1f;
+	zFar = 100;
+	speed = 3.0f;  // 3 units / second
+	mouseSpeed = 0.005f;
 
 	direction = glm::vec3(
 		cos(verticalAngle) * sin(horizontalAngle),
@@ -30,6 +35,14 @@ glm::mat4 Camera::getViewMatrix() {
 }
 glm::mat4 Camera::getProjectionMatrix() {
 	return ProjectionMatrix;
+}
+glm::vec3 Camera::getPosition()
+{
+	return position;
+}
+void Camera::setPosition(glm::vec3 pos)
+{
+	position += pos;
 }
 void Camera::computeMatricesFromInputs(int nUseMouse, int nWidth, int nHeight) {
 

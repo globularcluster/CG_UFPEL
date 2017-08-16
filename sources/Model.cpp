@@ -1,10 +1,16 @@
 
 #include "Model.hpp"
 
+Model::Model() {
 
-Model::Model(Mesh msh) {
+}
+
+Model::Model(Mesh msh, glm::vec3 pos, int id, glm::vec3 rot) {
 	this->mesh = msh;
-	this->transform_matrix = glm::translate(0.0f, 0.0f, 0.0f);
+	this->id = id;
+	this->translate_matrix = glm::translate( pos );
+	//this->rotation_matrix = glm::normalize(glm::quat(rot));
+	this->rotation_matrix = glm::quat(vec3(radians(rot.x), radians(rot.y), radians(rot.z)));
 	ModelMatrix = glm::mat4(1.0);
 }
 
@@ -18,6 +24,26 @@ glm::mat4 Model::getModelMatrix()
 	return this->ModelMatrix;
 }
 
+glm::mat4 Model::getTranslateMatrix()
+{
+	return translate_matrix;
+}
+
+glm::quat Model::getRotationMatrix()
+{
+	return this->rotation_matrix;
+}
+
+int Model::getId()
+{
+	return id;
+}
+
+GLuint Model::getTexture()
+{
+	return mesh.getTexture();
+}
+
 void Model::setTransformMatrix(glm::mat4 &matrix)
 {
 	this->transform_matrix = matrix;
@@ -25,9 +51,15 @@ void Model::setTransformMatrix(glm::mat4 &matrix)
 
 void Model::translate(glm::mat4 trans_mat)
 {
-	translate_matrix[3][0] += trans_mat[3][0];
-	translate_matrix[3][1] += trans_mat[3][1];
-	translate_matrix[3][2] += trans_mat[3][2];
+	//if(translate_matrix[3][0] >= 1)
+	//	translate_matrix[3][0] -= trans_mat[3][0];
+
+	//if (translate_matrix[3][1] <= -2)
+	//	translate_matrix[3][1] -= trans_mat[3][1];
+
+	translate_matrix[3][0] = trans_mat[3][0];
+	translate_matrix[3][1] = trans_mat[3][1];
+	translate_matrix[3][2] = trans_mat[3][2];
 
 }
 
@@ -36,9 +68,9 @@ void Model::scale(glm::mat4 scale_mat)
 	scale_matrix = scale_mat;
 }
 
-void Model::rotation(glm::mat4 rot_mat)
+void Model::rotation(glm::quat rot_mat)
 {
-	rotation_matrix *= rot_mat;
+	rotation_matrix = rot_mat;
 }
 
 void Model::shear(glm::mat4 shear_mat)
@@ -48,7 +80,7 @@ void Model::shear(glm::mat4 shear_mat)
 
 void Model::setTransformation()
 {
-	transform_matrix = translate_matrix * shear_matrix * rotation_matrix * scale_matrix;
+	transform_matrix = translate_matrix * shear_matrix * glm::toMat4(rotation_matrix) * scale_matrix;
 
 	this->ModelMatrix = this->transform_matrix;
 }

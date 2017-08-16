@@ -8,6 +8,7 @@
 
 #include "objloader.hpp"
 #include "vboindexer.hpp"
+#include "texture.hpp"
 
 // buffers
 
@@ -34,6 +35,8 @@ private:
 	GLuint normalbuffer;
 	GLuint elementbuffer;
 
+	GLuint Texture;
+
 
 public:
 	std::vector<unsigned short> getIndices();
@@ -44,9 +47,10 @@ public:
 	GLuint getUvBuffer();
 	GLuint getNormalBuffer();
 	GLuint getElementBuffer();
+	GLuint getTexture();
 
 	Mesh();
-	Mesh(std::string path);
+	Mesh(std::string obj);
 
 	void loadMesh(std::string path);
 	void createBuffers();
